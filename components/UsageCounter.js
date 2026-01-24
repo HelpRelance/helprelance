@@ -1,19 +1,14 @@
-export default function UsageCounter({ remainingUses, onShowPricing }) {
+export default function UsageCounter({ remainingUses }) {
   return (
-    <div className="text-center mb-8 animate-fadeIn">
-      <div className="inline-block bg-gradient-to-r from-emerald-500 to-teal-500 text-white px-8 py-4 rounded-full shadow-xl">
-        <span className="text-sm font-semibold uppercase tracking-wide">
-          Essais gratuits restants : <span className="text-3xl font-bold mx-2">{remainingUses}</span>/3
-        </span>
+    <div className="bg-white rounded-xl shadow-md p-6 mb-8 text-center border-2 border-amber-500">
+      <div className="flex items-center justify-center gap-3 mb-2">
+        <svg className="w-6 h-6 text-amber-500" fill="currentColor" viewBox="0 0 20 20">
+          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+        </svg>
+        <h3 className="text-xl font-bold text-slate-900">Essai gratuit</h3>
       </div>
-      <p className="text-gray-600 text-sm mt-3">
-        👆 Profitez-en maintenant ! 
-        <button
-          onClick={onShowPricing}
-          className="text-emerald-600 underline hover:text-emerald-800 font-semibold ml-1"
-        >
-          Ou passez à Premium
-        </button>
+      <p className="text-slate-600 text-sm">
+        <span className="text-3xl font-bold text-amber-500">{remainingUses}</span> / 1 essai gratuit utilisé
       </p>
     </div>
   );

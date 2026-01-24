@@ -17,12 +17,6 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { email } = req.body;
-
-    if (!email || !email.includes('@')) {
-      return res.status(400).json({ error: 'Email invalide' });
-    }
-
     const clientIP = getClientIP(req);
 
     const { data: ipUsers, error: ipError } = await supabase
@@ -35,49 +29,33 @@ export default async function handler(req, res) {
       throw ipError;
     }
 
-    const totalUsesFromIP = ipUsers ? ipUsers.reduce((sum, u) => sum + (3 - u.remaining_uses), 0) : 0;
+    const totalUsesFromIP = ipUsers ? ipUsers.reduce((sum, u) => sum + (1 - u.remaining_uses), 0) : 0;
 
-    if (totalUsesFromIP >= 3) {
+    if (totalUsesFromIP >= 1) {
       return res.status(429).json({ 
-        error: 'Limite d\'essais gratuits atteinte depuis cette connexion. Passez à Premium !' 
+        error: 'Vous avez déjà utilisé votre essai gratuit. Passez à Premium pour continuer !' 
       });
     }
 
-    const { data: existingUser, error: selectError } = await supabase
+    const fakeEmail = 'ip-' + clientIP.replace(/\./g, '-') + '@helprelance.local';
+
+    const { data: existingUser } = await supabase
       .from('users')
       .select('*')
-      .eq('email', email)
+      .eq('email', fakeEmail)
       .single();
-
-    if (selectError && selectError.code !== 'PGRST116') {
-      console.error('Erreur SELECT:', selectError);
-      throw selectError;
-    }
 
     let user;
 
     if (existingUser) {
       user = existingUser;
-      
-      const { error: updateError } = await supabase
-        .from('users')
-        .update({ 
-          email_verified: true,
-          ip_address: clientIP
-        })
-        .eq('email', email);
-      
-      if (updateError) {
-        console.error('Erreur UPDATE:', updateError);
-        throw updateError;
-      }
     } else {
       const { data: newUser, error: insertError } = await supabase
         .from('users')
         .insert({ 
-          email, 
+          email: fakeEmail,
           email_verified: true, 
-          remaining_uses: 3,
+          remaining_uses: 1,
           ip_address: clientIP
         })
         .select()
