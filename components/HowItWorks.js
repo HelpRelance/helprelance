@@ -1,49 +1,56 @@
 export default function HowItWorks() {
+  const steps = [
+    {
+      number: "01",
+      title: "Choisissez votre formule",
+      description: "Sélectionnez l'abonnement qui correspond à vos besoins professionnels."
+    },
+    {
+      number: "02",
+      title: "Renseignez les détails",
+      description: "Indiquez le contexte de votre relance en quelques clics seulement."
+    },
+    {
+      number: "03",
+      title: "Recevez vos emails",
+      description: "L'IA génère 3 versions adaptées à votre situation en 30 secondes."
+    }
+  ];
+
   return (
-    <section className="bg-gradient-to-br from-emerald-600 to-teal-600 rounded-2xl shadow-xl p-8 mb-8 text-white animate-fadeIn">
-      <h2 className="text-3xl font-bold mb-8 text-center">Comment ça marche ?</h2>
-      
-      <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-        {/* Étape 1 */}
-        <div className="text-center">
-          <div className="bg-white text-emerald-600 w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-4 shadow-lg">
-            1
-          </div>
-          <h3 className="font-bold text-xl mb-3">Remplissez le formulaire</h3>
-          <p className="text-emerald-50">
-            Type de service, situation, ton souhaité... Tout est simple et rapide (30 secondes chrono)
-          </p>
-        </div>
-        
-        {/* Étape 2 */}
-        <div className="text-center">
-          <div className="bg-white text-emerald-600 w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-4 shadow-lg">
-            2
-          </div>
-          <h3 className="font-bold text-xl mb-3">Obtenez 3 versions d'emails</h3>
-          <p className="text-emerald-50">
-            Notre IA génère 3 emails professionnels adaptés : court, standard et détaillé. Vous choisissez celui qui vous convient
-          </p>
-        </div>
-        
-        {/* Étape 3 */}
-        <div className="text-center">
-          <div className="bg-white text-emerald-600 w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-4 shadow-lg">
-            3
-          </div>
-          <h3 className="font-bold text-xl mb-3">Copiez et envoyez</h3>
-          <p className="text-emerald-50">
-            Un clic pour copier, collez dans votre messagerie, et voilà ! 85% de chances de recevoir une réponse sous 24h
-          </p>
-        </div>
-      </div>
-      
-      {/* Résultat final */}
-      <div className="mt-10 text-center bg-white/10 backdrop-blur rounded-xl p-6 max-w-2xl mx-auto border border-white/20">
-        <p className="text-2xl font-bold mb-2">📊 Résultat moyen</p>
-        <p className="text-lg">
-          Les utilisateurs récupèrent <span className="text-3xl font-bold text-yellow-300">85%</span> de leurs paiements en moins d'une semaine
+    <section className="mb-20">
+      <div className="text-center mb-12">
+        <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
+          Comment ça fonctionne
+        </h2>
+        <p className="text-lg text-slate-600 max-w-2xl mx-auto">
+          Un processus simple et efficace pour récupérer vos paiements
         </p>
+      </div>
+
+      <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+        {steps.map((step, index) => (
+          <div key={index} className="relative">
+            <div className="bg-white rounded-xl p-8 shadow-lg hover:shadow-xl transition-shadow duration-300 border border-slate-100 h-full">
+              <div className="text-6xl font-bold text-amber-500/20 mb-4">
+                {step.number}
+              </div>
+              <h3 className="text-xl font-bold text-slate-900 mb-3">
+                {step.title}
+              </h3>
+              <p className="text-slate-600 leading-relaxed">
+                {step.description}
+              </p>
+            </div>
+            {index < steps.length - 1 && (
+              <div className="hidden md:block absolute top-1/2 -right-4 transform -translate-y-1/2 z-10">
+                <svg className="w-8 h-8 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                </svg>
+              </div>
+            )}
+          </div>
+        ))}
       </div>
     </section>
   );
