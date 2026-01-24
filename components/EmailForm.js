@@ -17,7 +17,8 @@ export default function EmailForm({ userEmail, remainingUses, onGenerate, onShow
     e.preventDefault();
 
     if (!userEmail) {
-      alert('⚠️ Veuillez d\'abord vérifier votre email');
+      alert('⚠️ Veuillez d\'abord vous abonner');
+      onShowPricing();
       return;
     }
 
@@ -65,67 +66,53 @@ export default function EmailForm({ userEmail, remainingUses, onGenerate, onShow
     });
   };
 
-  const isButtonDisabled = !userEmail || remainingUses <= 0;
-
   return (
-    <section className="bg-white rounded-2xl shadow-xl p-8 mb-8">
-      <h2 className="text-2xl font-bold text-gray-800 mb-6">
+    <section className="bg-white rounded-2xl shadow-xl p-8 mb-8 border border-slate-200">
+      <h2 className="text-3xl font-bold text-slate-900 mb-6">
         Générez votre email de relance
       </h2>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-2">
-            Type de service
+          <label className="block text-sm font-semibold text-slate-700 mb-2">
+            Type de service *
           </label>
-          <select
+          <input
+            type="text"
             name="serviceType"
             value={formData.serviceType}
             onChange={handleChange}
+            placeholder="Ex: Design graphique, Développement web, Rédaction..."
             required
-            className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-          >
-            <option value="">Sélectionnez...</option>
-            <option value="Design graphique">Design graphique</option>
-            <option value="Rédaction">Rédaction</option>
-            <option value="Développement web">Développement web</option>
-            <option value="Consulting">Consulting</option>
-            <option value="Marketing">Marketing</option>
-            <option value="Photographie">Photographie</option>
-            <option value="Vidéo">Vidéo/Montage</option>
-            <option value="Autre">Autre</option>
-          </select>
+            className="w-full px-4 py-3 border-2 border-slate-200 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent transition"
+          />
         </div>
 
         <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-2">
-            Type de relance
+          <label className="block text-sm font-semibold text-slate-700 mb-2">
+            Type de relance *
           </label>
-          <select
+          <input
+            type="text"
             name="relanceType"
             value={formData.relanceType}
             onChange={handleChange}
+            placeholder="Ex: Devis sans réponse, Facture impayée, Projet en pause..."
             required
-            className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-          >
-            <option value="">Sélectionnez...</option>
-            <option value="Devis envoyé sans réponse">Devis envoyé sans réponse</option>
-            <option value="Projet en cours, client silencieux">Projet en cours, client silencieux</option>
-            <option value="Facture impayée">Facture impayée</option>
-            <option value="Réunion confirmée mais client absent">Réunion confirmée mais client absent</option>
-          </select>
+            className="w-full px-4 py-3 border-2 border-slate-200 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent transition"
+          />
         </div>
 
         <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-2">
-            Depuis combien de temps sans réponse ?
+          <label className="block text-sm font-semibold text-slate-700 mb-2">
+            Depuis combien de temps sans réponse ? *
           </label>
           <select
             name="delayTime"
             value={formData.delayTime}
             onChange={handleChange}
             required
-            className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+            className="w-full px-4 py-3 border-2 border-slate-200 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent transition"
           >
             <option value="">Sélectionnez...</option>
             <option value="2 jours">2 jours</option>
@@ -136,15 +123,15 @@ export default function EmailForm({ userEmail, remainingUses, onGenerate, onShow
         </div>
 
         <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-2">
-            Combien de relances avez-vous déjà envoyées ?
+          <label className="block text-sm font-semibold text-slate-700 mb-2">
+            Combien de relances avez-vous déjà envoyées ? *
           </label>
           <select
             name="previousFollowups"
             value={formData.previousFollowups}
             onChange={handleChange}
             required
-            className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+            className="w-full px-4 py-3 border-2 border-slate-200 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent transition"
           >
             <option value="">Sélectionnez...</option>
             <option value="0">0 (première relance)</option>
@@ -155,15 +142,15 @@ export default function EmailForm({ userEmail, remainingUses, onGenerate, onShow
         </div>
 
         <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-2">
-            Ton de l'email
+          <label className="block text-sm font-semibold text-slate-700 mb-2">
+            Ton de l'email *
           </label>
           <select
             name="tone"
             value={formData.tone}
             onChange={handleChange}
             required
-            className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+            className="w-full px-4 py-3 border-2 border-slate-200 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent transition"
           >
             <option value="">Sélectionnez...</option>
             <option value="Amical et décontracté">Amical et décontracté</option>
@@ -174,8 +161,8 @@ export default function EmailForm({ userEmail, remainingUses, onGenerate, onShow
         </div>
 
         <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-2">
-            Prénom du client <span className="text-gray-400 font-normal">(optionnel)</span>
+          <label className="block text-sm font-semibold text-slate-700 mb-2">
+            Prénom du client *
           </label>
           <input
             type="text"
@@ -183,45 +170,41 @@ export default function EmailForm({ userEmail, remainingUses, onGenerate, onShow
             value={formData.clientName}
             onChange={handleChange}
             placeholder="Ex: Marie"
-            className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+            required
+            className="w-full px-4 py-3 border-2 border-slate-200 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent transition"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-2">
-            Détail à mentionner <span className="text-gray-400 font-normal">(optionnel)</span>
+          <label className="block text-sm font-semibold text-slate-700 mb-2">
+            Détail à mentionner *
           </label>
-          <input
-            type="text"
+          <textarea
             name="detail"
             value={formData.detail}
             onChange={handleChange}
-            placeholder="Ex: le logo pour votre boutique en ligne"
-            className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+            placeholder="Ex: le logo pour votre boutique en ligne, la facture n°1234 de 850€..."
+            required
+            rows="3"
+            className="w-full px-4 py-3 border-2 border-slate-200 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent transition resize-none"
           />
         </div>
 
         <button
           type="submit"
-          disabled={isButtonDisabled || isLoading}
-          className={`w-full font-bold py-4 px-6 rounded-lg transition duration-300 transform shadow-lg ${
-            isButtonDisabled
-              ? 'bg-gray-400 cursor-not-allowed'
-              : 'bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 hover:scale-105 text-white'
-          }`}
+          disabled={isLoading}
+          className="w-full bg-gradient-to-r from-slate-900 to-slate-800 text-white font-bold py-4 px-6 rounded-xl transition duration-300 transform hover:scale-[1.02] shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isLoading ? (
-            <span className="flex items-center justify-center">
-              <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+            <span className="flex items-center justify-center gap-3">
+              <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"></circle>
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
               </svg>
               Génération en cours...
             </span>
-          ) : isButtonDisabled ? (
-            '⚠️ Vérifiez votre email pour continuer'
           ) : (
-            '💰 Récupérer mon argent maintenant'
+            '💰 Générer mes emails de relance'
           )}
         </button>
       </form>
