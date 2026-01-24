@@ -1,49 +1,29 @@
 import { useState } from 'react';
 
+const VERIFICATION_CODE = 'RELANCE2025';
+
 export default function EmailVerificationModal({ isOpen, onClose, onVerified }) {
-  const [step, setStep] = useState('email'); // 'email' ou 'code'
   const [email, setEmail] = useState('');
   const [code, setCode] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const handleSendCode = async (e) => {
+  const handleVerify = async (e) => {
     e.preventDefault();
     setError('');
+
+    if (code.toUpperCase() !== VERIFICATION_CODE) {
+      setError('Code invalide. Le code est : RELANCE2025');
+      return;
+    }
+
     setIsLoading(true);
 
     try {
-      const response = await fetch('/api/auth/send-verification', {
+      const response = await fetch('/api/auth/verify-with-code', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        setStep('code');
-        alert('✅ Code envoyé ! Vérifiez votre boîte email (et spam).');
-      } else {
-        setError(data.error || 'Erreur lors de l\'envoi');
-      }
-    } catch (err) {
-      setError('Erreur de connexion');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleVerifyCode = async (e) => {
-    e.preventDefault();
-    setError('');
-    setIsLoading(true);
-
-    try {
-      const response = await fetch('/api/auth/verify-code', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, code }),
       });
 
       const data = await response.json();
@@ -54,9 +34,8 @@ export default function EmailVerificationModal({ isOpen, onClose, onVerified }) 
         onVerified(data.user);
         setEmail('');
         setCode('');
-        setStep('email');
       } else {
-        setError(data.error || 'Code invalide');
+        setError(data.error || 'Erreur');
       }
     } catch (err) {
       setError('Erreur de connexion');
@@ -77,85 +56,59 @@ export default function EmailVerificationModal({ isOpen, onClose, onVerified }) 
           ✕
         </button>
 
-        {step === 'email' ? (
-          <>
-            <h2 className="text-3xl font-bold text-emerald-900 mb-4">
-              🎁 Débloquez vos 3 essais gratuits
-            </h2>
-            <p className="text-gray-600 mb-6">
-              Entrez votre email pour recevoir un code de vérification et débloquer vos essais.
-            </p>
+        <h2 className="text-3xl font-bold text-emerald-900 mb-4">
+          🎁 Débloquez vos 3 essais gratuits
+        </h2>
+        
+        <div className="bg-emerald-50 border-2 border-emerald-200 rounded-lg p-4 mb-6">
+          <p className="text-sm font-semibold text-emerald-800 mb-2">
+            🔑 Code de vérification :
+          </p>
+          <p className="text-2xl font-bold text-emerald-600 text-center tracking-wider">
+            RELANCE2025
+          </p>
+        </div>
 
-            {error && (
-              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4">
-                {error}
-              </div>
-            )}
+        <p className="text-gray-600 mb-6 text-sm">
+          Entrez votre email et le code ci-dessus pour débloquer vos essais gratuits.
+        </p>
 
-            <form onSubmit={handleSendCode} className="space-y-4">
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="votre@email.com"
-                required
-                className="w-full px-4 py-3 border-2 border-emerald-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-              />
-              <button
-                type="submit"
-                disabled={isLoading}
-                className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold py-3 rounded-lg hover:from-emerald-700 hover:to-teal-700 transition disabled:opacity-50"
-              >
-                {isLoading ? 'Envoi...' : '📧 Recevoir le code'}
-              </button>
-            </form>
-          </>
-        ) : (
-          <>
-            <h2 className="text-3xl font-bold text-emerald-900 mb-4">
-              🔐 Entrez votre code
-            </h2>
-            <p className="text-gray-600 mb-2">
-              Un code à 6 chiffres a été envoyé à :
-            </p>
-            <p className="font-bold text-emerald-600 mb-6">{email}</p>
-
-            {error && (
-              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4">
-                {error}
-              </div>
-            )}
-
-            <form onSubmit={handleVerifyCode} className="space-y-4">
-              <input
-                type="text"
-                value={code}
-                onChange={(e) => setCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                placeholder="123456"
-                maxLength={6}
-                required
-                className="w-full px-4 py-3 border-2 border-emerald-200 rounded-lg text-center text-2xl font-bold tracking-widest focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-              />
-              <button
-                type="submit"
-                disabled={isLoading || code.length !== 6}
-                className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold py-3 rounded-lg hover:from-emerald-700 hover:to-teal-700 transition disabled:opacity-50"
-              >
-                {isLoading ? 'Vérification...' : '✅ Vérifier'}
-              </button>
-            </form>
-
-            <button
-              onClick={() => setStep('email')}
-              className="w-full mt-4 text-sm text-gray-600 hover:text-emerald-600"
-            >
-              ← Changer d'email
-            </button>
-          </>
+        {error && (
+          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4 text-sm">
+            {error}
+          </div>
         )}
 
+        <form onSubmit={handleVerify} className="space-y-4">
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="votre@email.com"
+            required
+            className="w-full px-4 py-3 border-2 border-emerald-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+          />
+          
+          <input
+            type="text"
+            value={code}
+            onChange={(e) => setCode(e.target.value.toUpperCase())}
+            placeholder="Entrez le code"
+            required
+            className="w-full px-4 py-3 border-2 border-emerald-200 rounded-lg text-center font-bold tracking-wider focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+          />
+          
+          <button
+            type="submit"
+            disabled={isLoading}
+            className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold py-3 rounded-lg hover:from-emerald-700 hover:to-teal-700 transition disabled:opacity-50"
+          >
+            {isLoading ? 'Vérification...' : '✅ Débloquer mes essais'}
+          </button>
+        </form>
+
         <p className="text-xs text-gray-500 mt-4 text-center">
-          🔒 Vos données sont sécurisées et ne seront jamais partagées.
+          🔒 Limité à 3 essais par connexion. Vos données sont sécurisées.
         </p>
       </div>
     </div>
