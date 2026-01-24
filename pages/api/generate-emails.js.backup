@@ -1,0 +1,102 @@
+import Anthropic from '@anthropic-ai/sdk';
+
+export default async function handler(req, res) {
+  // Accepter seulement les requêtes POST
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  try {
+    const { formData } = req.body;
+
+    // Vérifier que les données sont présentes
+    if (!formData) {
+      return res.status(400).json({ error: 'Missing form data' });
+    }
+
+    // Initialiser le client Anthropic avec la clé API du serveur (sécurisée)
+    const anthropic = new Anthropic({
+      apiKey: process.env.ANTHROPIC_API_KEY,
+    });
+
+    // Construire le prompt
+    const prompt = `Tu es un expert en communication freelance. Génère 3 emails de relance professionnels basés sur ces informations :
+
+- Service proposé : ${formData.serviceType}
+- Type de relance : ${formData.relanceType}
+- Délai sans réponse : ${formData.delayTime}
+- Nombre de relances déjà faites : ${formData.previousFollowups}
+- Ton souhaité : ${formData.tone}
+${formData.clientName ? `- Prénom du client : ${formData.clientName}` : ''}
+${formData.detail ? `- Détail à mentionner : ${formData.detail}` : ''}
+
+INSTRUCTIONS IMPORTANTES :
+1. Génère exactement 3 emails : un court (3-4 lignes), un standard (6-8 lignes), et un détaillé (10-12 lignes)
+2. Pour chaque email, fournis OBLIGATOIREMENT :
+   - Un objet d'email accrocheur et personnalisé
+   - Le corps du message
+3. Utilise ce format EXACT (respecte bien les balises) :
+
+EMAIL 1 - COURT
+OBJET: [ton objet ici]
+CORPS:
+[ton message ici]
+
+EMAIL 2 - STANDARD
+OBJET: [ton objet ici]
+CORPS:
+[ton message ici]
+
+EMAIL 3 - DÉTAILLÉ
+OBJET: [ton objet ici]
+CORPS:
+[ton message ici]
+
+RÈGLES POUR LES EMAILS :
+- Sois poli mais confiant, jamais suppliant
+- Crée un léger sentiment d'urgence sans être agressif
+- Offre une porte de sortie au client ("Si ce n'est plus d'actualité...")
+- Reste professionnel même avec un ton amical
+- Utilise le prénom du client si fourni
+- Mentionne le détail spécifique si fourni
+- Adapte le niveau d'insistance selon le nombre de relances précédentes
+- Pour les factures impayées, reste ferme mais courtois
+
+Génère maintenant les 3 emails en respectant strictement le format ci-dessus.`;
+
+    // Appel à l'API Claude
+    const message = await anthropic.messages.create({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 2000,
+      messages: [
+        {
+          role: 'user',
+          content: prompt,
+        },
+      ],
+    });
+
+    // Extraire le texte de la réponse
+    const emailsText = message.content[0].text;
+
+    // Retourner la réponse
+    return res.status(200).json({
+      success: true,
+      emailsText,
+    });
+
+  } catch (error) {
+    console.error('Error generating emails:', error);
+    
+    // Gérer les erreurs spécifiques
+    if (error.status === 401) {
+      return res.status(401).json({ 
+        error: 'Clé API invalide. Vérifiez votre configuration.' 
+      });
+    }
+    
+    return res.status(500).json({ 
+      error: 'Erreur lors de la génération des emails. Veuillez réessayer.' 
+    });
+  }
+}

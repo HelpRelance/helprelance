@@ -1,0 +1,242 @@
+import { useState, useEffect } from 'react';
+import Head from 'next/head';
+import TopBanner from '../components/TopBanner';
+import Header from '../components/Header';
+import HowItWorks from '../components/HowItWorks';
+import WhyFreelancesLoveIt from '../components/WhyFreelancesLoveIt';
+import UsageCounter from '../components/UsageCounter';
+import EmailForm from '../components/EmailForm';
+import EmailResults from '../components/EmailResults';
+import Testimonials from '../components/Testimonials';
+import FAQ from '../components/FAQ';
+import EmailCollectionModal from '../components/EmailCollectionModal';
+import PricingModal from '../components/PricingModal';
+
+export default function Home() {
+  // États
+  const [remainingUses, setRemainingUses] = useState(3);
+  const [emails, setEmails] = useState(null);
+  const [showEmailModal, setShowEmailModal] = useState(false);
+  const [showPricingModal, setShowPricingModal] = useState(false);
+  const [userEmail, setUserEmail] = useState('');
+  const [hasProvidedEmail, setHasProvidedEmail] = useState(false);
+
+  // Initialisation au chargement
+  useEffect(() => {
+    // Vérifier le localStorage
+    const storedEmail = localStorage.getItem('helprelance_email');
+    const storedRemaining = localStorage.getItem('helprelance_remaining');
+    const emailProvided = localStorage.getItem('helprelance_email_provided');
+
+    if (storedEmail) {
+      setUserEmail(storedEmail);
+      setHasProvidedEmail(true);
+    }
+
+    if (storedRemaining) {
+      setRemainingUses(parseInt(storedRemaining));
+    }
+
+    // Afficher le modal email après 2 secondes si pas d'email
+    if (!storedEmail && emailProvided !== 'false') {
+      const timer = setTimeout(() => {
+        setShowEmailModal(true);
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, []);
+
+  // Handler pour la collecte d'email
+  const handleEmailSubmit = (email) => {
+    localStorage.setItem('helprelance_email', email);
+    localStorage.setItem('helprelance_email_provided', 'true');
+    setUserEmail(email);
+    setHasProvidedEmail(true);
+    setShowEmailModal(false);
+    alert('✅ Parfait ! Vos 3 essais gratuits sont débloqués. Bon courage pour vos relances ! 💪');
+  };
+
+  // Handler pour fermer le modal email sans fournir d'email
+  const handleEmailModalClose = () => {
+    localStorage.setItem('helprelance_email_provided', 'false');
+    localStorage.setItem('helprelance_remaining', '0');
+    setRemainingUses(0);
+    setShowEmailModal(false);
+    
+    alert('⚠️ Pour utiliser HelpRelance gratuitement, vous devez entrer votre email.\n\nVous pouvez soit :\n• Entrer votre email pour 3 essais gratuits\n• Passer directement à Premium');
+    
+    setTimeout(() => {
+      setShowPricingModal(true);
+    }, 500);
+  };
+
+  // Handler pour la génération d'emails
+  const handleEmailsGenerated = (emailsText, formData) => {
+    // Parser les emails
+    const parsedEmails = parseEmails(emailsText);
+    setEmails(parsedEmails);
+
+    // Décrémenter les essais
+    const newRemaining = remainingUses - 1;
+    setRemainingUses(newRemaining);
+    localStorage.setItem('helprelance_remaining', newRemaining.toString());
+
+    // Scroller vers les résultats
+    setTimeout(() => {
+      document.getElementById('results')?.scrollIntoView({ behavior: 'smooth' });
+    }, 100);
+  };
+
+  // Parser les emails depuis le texte de Claude
+  const parseEmails = (text) => {
+    const emails = [];
+    
+    for (let i = 1; i <= 3; i++) {
+      const patterns = [
+        new RegExp(`EMAIL ${i}[^\\n]*\\nOBJET:\\s*([^\\n]+)\\nCORPS:\\s*([\\s\\S]*?)(?=EMAIL ${i + 1}|$)`, 'i'),
+        new RegExp(`EMAIL ${i}[^\\n]*\\nOBJET:\\s*([^\\n]+)\\s+CORPS:\\s*([\\s\\S]*?)(?=EMAIL ${i + 1}|$)`, 'i')
+      ];
+      
+      let email = null;
+      for (let pattern of patterns) {
+        const match = text.match(pattern);
+        if (match) {
+          email = {
+            subject: match[1].trim(),
+            body: match[2].trim().replace(/\n{3,}/g, '\n\n')
+          };
+          break;
+        }
+      }
+      
+      if (email) {
+        emails.push(email);
+      }
+    }
+    
+    return emails.length === 3 ? emails : null;
+  };
+
+  // Handler pour sauvegarder dans l'historique
+  const handleSaveToHistory = () => {
+    if (!emails) return;
+    
+    let history = JSON.parse(localStorage.getItem('helprelance_history') || '[]');
+    history.unshift({
+      emails,
+      timestamp: new Date().toISOString()
+    });
+    
+    // Garder seulement les 10 derniers
+    if (history.length > 10) {
+      history = history.slice(0, 10);
+    }
+    
+    localStorage.setItem('helprelance_history', JSON.stringify(history));
+    alert('💾 Email sauvegardé dans votre historique !');
+  };
+
+  // Handler pour reset et générer un nouvel email
+  const handleReset = () => {
+    setEmails(null);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  // Handler pour rouvrir le modal email
+  const handleReopenEmailModal = () => {
+    localStorage.removeItem('helprelance_email_provided');
+    localStorage.setItem('helprelance_remaining', '3');
+    setRemainingUses(3);
+    setShowPricingModal(false);
+    setShowEmailModal(true);
+  };
+
+  return (
+    <>
+      <Head>
+        <title>HelpRelance - Récupérez vos factures impayées en 24h</title>
+        <meta
+          name="description"
+          content="Générez des emails de relance professionnels en 30 secondes. 85% de taux de réponse garanti. Essai gratuit !"
+        />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
+
+      {/* Barre du haut */}
+      <TopBanner onShowPricing={() => setShowPricingModal(true)} />
+
+      {/* Container principal */}
+      <div className="container mx-auto px-4 py-8 max-w-4xl bg-gradient-to-br from-emerald-50 to-teal-100 min-h-screen">
+        {/* Header */}
+        <Header />
+
+        {/* Comment ça marche */}
+        <HowItWorks />
+
+        {/* Pourquoi les freelances adorent */}
+        <WhyFreelancesLoveIt />
+
+        {/* Compteur d'essais */}
+        <UsageCounter
+          remainingUses={remainingUses}
+          onShowPricing={() => setShowPricingModal(true)}
+        />
+
+        {/* Formulaire */}
+        {!emails && (
+          <EmailForm
+            remainingUses={remainingUses}
+            onGenerate={handleEmailsGenerated}
+            onShowPricing={() => setShowPricingModal(true)}
+          />
+        )}
+
+        {/* Résultats */}
+        {emails && (
+          <div id="results">
+            <EmailResults
+              emails={emails}
+              onReset={handleReset}
+              onSave={handleSaveToHistory}
+              onShowHistory={() => alert('Fonctionnalité bientôt disponible !')}
+            />
+          </div>
+        )}
+
+        {/* Témoignages */}
+        <Testimonials />
+
+        {/* FAQ */}
+        <FAQ />
+
+        {/* Footer */}
+        <footer className="text-center mt-12 text-gray-600 text-sm space-y-2">
+          <p>Créé avec ❤️ pour aider les freelances à récupérer leurs paiements</p>
+          <div className="flex justify-center gap-4 text-xs">
+            <a href="#" className="hover:text-emerald-600">Politique de confidentialité</a>
+            <span>•</span>
+            <a href="#" className="hover:text-emerald-600">Conditions d'utilisation</a>
+            <span>•</span>
+            <a href={`mailto:${process.env.NEXT_PUBLIC_CONTACT_EMAIL || 'contact@helprelance.com'}`} className="hover:text-emerald-600">
+              Contact
+            </a>
+          </div>
+        </footer>
+      </div>
+
+      {/* Modals */}
+      <EmailCollectionModal
+        isOpen={showEmailModal}
+        onClose={handleEmailModalClose}
+        onSubmit={handleEmailSubmit}
+      />
+
+      <PricingModal
+        isOpen={showPricingModal}
+        onClose={() => setShowPricingModal(false)}
+        onReopenEmailModal={handleReopenEmailModal}
+      />
+    </>
+  );
+}
