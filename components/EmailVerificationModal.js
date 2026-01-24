@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-const VERIFICATION_CODE = 'RELANCE2025';
+const VERIFICATION_CODE = 'RELANCE2026';
 
 export default function EmailVerificationModal({ isOpen, onClose, onVerified }) {
   const [email, setEmail] = useState('');
@@ -13,7 +13,7 @@ export default function EmailVerificationModal({ isOpen, onClose, onVerified }) 
     setError('');
 
     if (code.toUpperCase() !== VERIFICATION_CODE) {
-      setError('Code invalide. Le code est : RELANCE2025');
+      setError('Code invalide. Le code est : RELANCE2026');
       return;
     }
 
@@ -65,7 +65,7 @@ export default function EmailVerificationModal({ isOpen, onClose, onVerified }) 
             🔑 Code de vérification :
           </p>
           <p className="text-2xl font-bold text-emerald-600 text-center tracking-wider">
-            RELANCE2025
+            RELANCE2026
           </p>
         </div>
 
