@@ -30,6 +30,109 @@ export default function Home() {
           <Header />
           <HowItWorks />
 
+          {/* NOUVELLE SECTION : Aperçu du formulaire */}
+          <section className="mb-20">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
+                Un formulaire simple et intuitif
+              </h2>
+              <p className="text-lg text-slate-600 max-w-2xl mx-auto">
+                Remplissez quelques informations et l'IA génère 3 versions d'emails personnalisés
+              </p>
+            </div>
+
+            <div className="bg-white rounded-2xl shadow-xl p-8 max-w-3xl mx-auto border border-slate-200">
+              <div className="space-y-6 opacity-75 pointer-events-none">
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">
+                    Type de service
+                  </label>
+                  <input
+                    type="text"
+                    value="Design graphique"
+                    readOnly
+                    className="w-full px-4 py-3 border-2 border-slate-200 rounded-lg bg-slate-50"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">
+                    Type de relance
+                  </label>
+                  <input
+                    type="text"
+                    value="Facture impayée"
+                    readOnly
+                    className="w-full px-4 py-3 border-2 border-slate-200 rounded-lg bg-slate-50"
+                  />
+                </div>
+
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-semibold text-slate-700 mb-2">
+                      Délai sans réponse
+                    </label>
+                    <select className="w-full px-4 py-3 border-2 border-slate-200 rounded-lg bg-slate-50">
+                      <option>2 semaines</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold text-slate-700 mb-2">
+                      Ton de l'email
+                    </label>
+                    <select className="w-full px-4 py-3 border-2 border-slate-200 rounded-lg bg-slate-50">
+                      <option>Professionnel et neutre</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">
+                    Prénom du client
+                  </label>
+                  <input
+                    type="text"
+                    value="Marie"
+                    readOnly
+                    className="w-full px-4 py-3 border-2 border-slate-200 rounded-lg bg-slate-50"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">
+                    Détail à mentionner
+                  </label>
+                  <textarea
+                    value="la facture n°1234 de 850€ pour le logo de sa boutique"
+                    readOnly
+                    rows="2"
+                    className="w-full px-4 py-3 border-2 border-slate-200 rounded-lg bg-slate-50 resize-none"
+                  />
+                </div>
+
+                <button
+                  disabled
+                  className="w-full bg-gradient-to-r from-slate-900 to-slate-800 text-white font-bold py-4 px-6 rounded-xl opacity-50 cursor-not-allowed"
+                >
+                  💰 Générer mes emails de relance
+                </button>
+              </div>
+
+              <div className="mt-6 text-center">
+                <p className="text-sm text-slate-500 mb-4">
+                  ⚡ En 30 secondes, vous obtenez 3 versions adaptées à votre situation
+                </p>
+                <button
+                  onClick={() => setShowPricingModal(true)}
+                  className="text-amber-500 hover:text-amber-600 font-semibold"
+                >
+                  Essayer maintenant →
+                </button>
+              </div>
+            </div>
+          </section>
+
           <section className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-3xl shadow-2xl p-12 mb-16 text-center relative overflow-hidden">
             <div className="absolute top-0 right-0 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl"></div>
             <div className="absolute bottom-0 left-0 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl"></div>
