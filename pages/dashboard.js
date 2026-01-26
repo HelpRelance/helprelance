@@ -149,18 +149,11 @@ export default function Dashboard() {
               <svg className="w-16 h-16 text-slate-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
               </svg>
-              <p className="text-slate-600 mb-4">Aucun email généré pour le moment</p>
-              {!subscription ? (
-                <button
-                  onClick={() => setShowPricingModal(true)}
-                  className="inline-block px-6 py-3 bg-gradient-to-r from-slate-900 to-slate-800 text-white font-bold rounded-lg hover:from-slate-800 hover:to-slate-700 transition"
-                >
-                  Choisir une formule pour commencer
-                </button>
-              ) : (
+              <p className="text-slate-600">Aucun email généré pour le moment</p>
+              {subscription && (
                 <Link
                   href="/"
-                  className="inline-block px-6 py-3 bg-gradient-to-r from-slate-900 to-slate-800 text-white font-bold rounded-lg hover:from-slate-800 hover:to-slate-700 transition"
+                  className="inline-block mt-6 px-6 py-3 bg-gradient-to-r from-slate-900 to-slate-800 text-white font-bold rounded-lg hover:from-slate-800 hover:to-slate-700 transition"
                 >
                   Générer mon premier email
                 </Link>
