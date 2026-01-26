@@ -40,7 +40,7 @@ export default function Dashboard() {
         } else if (userData.remaining_uses && userData.remaining_uses > 0) {
           setSubscription('Pro');
         } else {
-          setSubscription('Aucun abonnement');
+          setSubscription(null);
         }
       }
 
@@ -107,16 +107,21 @@ export default function Dashboard() {
               </div>
               <h3 className="text-lg font-bold text-slate-900">Abonnement</h3>
             </div>
-            <p className="text-2xl font-bold text-slate-900">
-              {subscription || 'Chargement...'}
-            </p>
-            {subscription === 'Aucun abonnement' && (
-              <button 
-                onClick={() => setShowPricingModal(true)}
-                className="text-sm text-amber-500 hover:text-amber-600 font-semibold mt-2"
-              >
-                Choisir une formule →
-              </button>
+            {subscription ? (
+              <>
+                <p className="text-2xl font-bold text-slate-900">{subscription}</p>
+                <p className="text-sm text-slate-500 mt-1">Formule active</p>
+              </>
+            ) : (
+              <>
+                <p className="text-2xl font-bold text-slate-900">Aucune formule</p>
+                <button 
+                  onClick={() => setShowPricingModal(true)}
+                  className="mt-3 w-full px-4 py-2 bg-amber-500 text-white text-sm font-bold rounded-lg hover:bg-amber-600 transition"
+                >
+                  Choisir une formule
+                </button>
+              </>
             )}
           </div>
 
@@ -145,7 +150,7 @@ export default function Dashboard() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
               </svg>
               <p className="text-slate-600 mb-4">Aucun email généré pour le moment</p>
-              {subscription === 'Aucun abonnement' ? (
+              {!subscription ? (
                 <button
                   onClick={() => setShowPricingModal(true)}
                   className="inline-block px-6 py-3 bg-gradient-to-r from-slate-900 to-slate-800 text-white font-bold rounded-lg hover:from-slate-800 hover:to-slate-700 transition"
