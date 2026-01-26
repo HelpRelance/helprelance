@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { createClient } from '@supabase/supabase-js';
@@ -14,6 +14,7 @@ export default function Header() {
   const [totalEmails, setTotalEmails] = useState(2847);
   const [user, setUser] = useState(null);
   const [showMenu, setShowMenu] = useState(false);
+  const menuRef = useRef(null);
 
   useEffect(() => {
     const getUser = async () => {
@@ -29,6 +30,22 @@ export default function Header() {
 
     return () => subscription.unsubscribe();
   }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setShowMenu(false);
+      }
+    };
+
+    if (showMenu) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showMenu]);
 
   useEffect(() => {
     const todayInterval = setInterval(() => {
@@ -55,7 +72,7 @@ export default function Header() {
     <header className="mb-16 pt-8">
       <div className="flex justify-end mb-6 gap-3">
         {user ? (
-          <div className="relative">
+          <div className="relative" ref={menuRef}>
             <button
               onClick={() => setShowMenu(!showMenu)}
               className="flex items-center gap-2 bg-white px-4 py-2 rounded-lg border-2 border-slate-200 hover:border-amber-500 transition"
@@ -76,21 +93,7 @@ export default function Header() {
                   className="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 transition"
                   onClick={() => setShowMenu(false)}
                 >
-                  📊 Tableau de bord
-                </Link>
-                <Link
-                  href="/dashboard"
-                  className="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 transition"
-                  onClick={() => setShowMenu(false)}
-                >
-                  💳 Mon abonnement
-                </Link>
-                <Link
-                  href="/dashboard"
-                  className="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 transition"
-                  onClick={() => setShowMenu(false)}
-                >
-                  📂 Historique
+                  📊 Dashboard
                 </Link>
                 <hr className="my-2 border-slate-200" />
                 <button
