@@ -114,7 +114,7 @@ export default function Dashboard() {
               </>
             ) : (
               <>
-                <p className="text-2xl font-bold text-slate-900">Aucune formule</p>
+                <p className="text-2xl font-bold text-slate-900">Aucun</p>
                 <button 
                   onClick={() => setShowPricingModal(true)}
                   className="mt-3 w-full px-4 py-2 bg-amber-500 text-white text-sm font-bold rounded-lg hover:bg-amber-600 transition"
