@@ -240,15 +240,9 @@ export default function Home() {
                   </div>
 
                   <div className="mt-6 text-center">
-                    <p className="text-sm text-slate-500 mb-4">
+                    <p className="text-sm text-slate-500">
                       ⚡ En 30 secondes, vous obtenez 3 versions adaptées à votre situation
                     </p>
-                    <button
-                      onClick={() => setShowPricingModal(true)}
-                      className="text-amber-500 hover:text-amber-600 font-semibold"
-                    >
-                      Commencer maintenant →
-                    </button>
                   </div>
                 </div>
               </section>
