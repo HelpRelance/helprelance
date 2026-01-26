@@ -1,14 +1,65 @@
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
+import { createClient } from '@supabase/supabase-js';
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+);
 
 export default function PricingModal({ isOpen, onClose }) {
   const router = useRouter();
+  const [user, setUser] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    const getUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      setUser(user);
+    };
+    getUser();
+  }, []);
+
+  const handleSelectPlan = async (plan) => {
+    if (!user) {
+      localStorage.setItem('selected_plan', plan);
+      router.push('/signup');
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const priceId = plan === 'pro' 
+        ? process.env.NEXT_PUBLIC_STRIPE_PRICE_PRO || 'price_1StlZHAfNQgXJOqE4iwRWX4F'
+        : process.env.NEXT_PUBLIC_STRIPE_PRICE_PREMIUM || 'price_1Stla1AfNQgXJOqEZwTj6Xnv';
+
+      const response = await fetch('/api/stripe/create-checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          priceId,
+          userId: user.id,
+          userEmail: user.email,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        alert('Erreur lors de la création de la session de paiement');
+      }
+    } catch (error) {
+      console.error('Erreur:', error);
+      alert('Une erreur est survenue');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   if (!isOpen) return null;
-
-  const handleSelectPlan = (plan) => {
-    localStorage.setItem('selected_plan', plan);
-    router.push('/signup');
-  };
 
   return (
     <div className="fixed inset-0 bg-slate-900/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
@@ -75,9 +126,10 @@ export default function PricingModal({ isOpen, onClose }) {
 
             <button 
               onClick={() => handleSelectPlan('pro')}
-              className="w-full bg-slate-900 text-white font-semibold py-4 rounded-xl hover:bg-slate-800 transition-colors duration-300"
+              disabled={isLoading}
+              className="w-full bg-slate-900 text-white font-semibold py-4 rounded-xl hover:bg-slate-800 transition-colors duration-300 disabled:opacity-50"
             >
-              Commencer avec Pro
+              {isLoading ? 'Chargement...' : 'Commencer avec Pro'}
             </button>
           </div>
 
@@ -144,9 +196,10 @@ export default function PricingModal({ isOpen, onClose }) {
 
             <button 
               onClick={() => handleSelectPlan('premium')}
-              className="w-full bg-amber-500 text-slate-900 font-bold py-4 rounded-xl hover:bg-amber-400 transition-colors duration-300 shadow-lg"
+              disabled={isLoading}
+              className="w-full bg-amber-500 text-slate-900 font-bold py-4 rounded-xl hover:bg-amber-400 transition-colors duration-300 shadow-lg disabled:opacity-50"
             >
-              Commencer avec Premium
+              {isLoading ? 'Chargement...' : 'Commencer avec Premium'}
             </button>
           </div>
         </div>
