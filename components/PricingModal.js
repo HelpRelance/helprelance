@@ -91,7 +91,7 @@ export default function PricingModal({ isOpen, onClose }) {
             Choisissez votre formule
           </h2>
           <p className="text-slate-600">
-            Des tarifs transparents pour récupérer vos paiements efficacement
+            Générez vos emails de relance professionnels en quelques clics
           </p>
           {!user && (
             <p className="text-sm text-amber-600 mt-2">
