@@ -1,5 +1,14 @@
+import { useRouter } from 'next/router';
+
 export default function PricingModal({ isOpen, onClose }) {
+  const router = useRouter();
+
   if (!isOpen) return null;
+
+  const handleSelectPlan = (plan) => {
+    localStorage.setItem('selected_plan', plan);
+    router.push('/signup');
+  };
 
   return (
     <div className="fixed inset-0 bg-slate-900/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
@@ -64,7 +73,10 @@ export default function PricingModal({ isOpen, onClose }) {
               </li>
             </ul>
 
-            <button className="w-full bg-slate-900 text-white font-semibold py-4 rounded-xl hover:bg-slate-800 transition-colors duration-300">
+            <button 
+              onClick={() => handleSelectPlan('pro')}
+              className="w-full bg-slate-900 text-white font-semibold py-4 rounded-xl hover:bg-slate-800 transition-colors duration-300"
+            >
               Commencer avec Pro
             </button>
           </div>
@@ -130,7 +142,10 @@ export default function PricingModal({ isOpen, onClose }) {
               </li>
             </ul>
 
-            <button className="w-full bg-amber-500 text-slate-900 font-bold py-4 rounded-xl hover:bg-amber-400 transition-colors duration-300 shadow-lg">
+            <button 
+              onClick={() => handleSelectPlan('premium')}
+              className="w-full bg-amber-500 text-slate-900 font-bold py-4 rounded-xl hover:bg-amber-400 transition-colors duration-300 shadow-lg"
+            >
               Commencer avec Premium
             </button>
           </div>
