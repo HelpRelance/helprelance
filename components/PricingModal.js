@@ -11,6 +11,7 @@ export default function PricingModal({ isOpen, onClose }) {
   const router = useRouter();
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     const getUser = async () => {
@@ -18,9 +19,11 @@ export default function PricingModal({ isOpen, onClose }) {
       setUser(user);
     };
     getUser();
-  }, []);
+  }, [isOpen]);
 
   const handleSelectPlan = async (plan) => {
+    setError('');
+    
     if (!user) {
       localStorage.setItem('selected_plan', plan);
       router.push('/signup');
@@ -31,8 +34,10 @@ export default function PricingModal({ isOpen, onClose }) {
 
     try {
       const priceId = plan === 'pro' 
-        ? process.env.NEXT_PUBLIC_STRIPE_PRICE_PRO || 'price_1StlZHAfNQgXJOqE4iwRWX4F'
-        : process.env.NEXT_PUBLIC_STRIPE_PRICE_PREMIUM || 'price_1Stla1AfNQgXJOqEZwTj6Xnv';
+        ? 'price_1StlZHAfNQgXJOqE4iwRWX4F'
+        : 'price_1Stla1AfNQgXJOqEZwTj6Xnv';
+
+      console.log('Envoi vers Stripe:', { priceId, userId: user.id, userEmail: user.email });
 
       const response = await fetch('/api/stripe/create-checkout', {
         method: 'POST',
@@ -46,14 +51,20 @@ export default function PricingModal({ isOpen, onClose }) {
 
       const data = await response.json();
 
+      console.log('Réponse Stripe:', data);
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Erreur lors de la création de la session');
+      }
+
       if (data.url) {
         window.location.href = data.url;
       } else {
-        alert('Erreur lors de la création de la session de paiement');
+        throw new Error('URL de paiement non reçue');
       }
     } catch (error) {
-      console.error('Erreur:', error);
-      alert('Une erreur est survenue');
+      console.error('Erreur complète:', error);
+      setError(error.message || 'Une erreur est survenue. Réessayez.');
     } finally {
       setIsLoading(false);
     }
@@ -78,7 +89,18 @@ export default function PricingModal({ isOpen, onClose }) {
           <p className="text-lg text-slate-600">
             Des tarifs transparents pour récupérer vos paiements efficacement
           </p>
+          {!user && (
+            <p className="text-sm text-amber-600 mt-2">
+              Vous serez redirigé vers la création de compte
+            </p>
+          )}
         </div>
+
+        {error && (
+          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6 text-sm">
+            {error}
+          </div>
+        )}
 
         <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
           <div className="bg-white border-2 border-slate-200 rounded-2xl p-8 hover:border-amber-500 transition-all duration-300">
@@ -129,7 +151,7 @@ export default function PricingModal({ isOpen, onClose }) {
               disabled={isLoading}
               className="w-full bg-slate-900 text-white font-semibold py-4 rounded-xl hover:bg-slate-800 transition-colors duration-300 disabled:opacity-50"
             >
-              {isLoading ? 'Chargement...' : 'Commencer avec Pro'}
+              {isLoading ? 'Chargement...' : user ? 'Commencer avec Pro' : 'S\'inscrire et choisir Pro'}
             </button>
           </div>
 
@@ -199,7 +221,7 @@ export default function PricingModal({ isOpen, onClose }) {
               disabled={isLoading}
               className="w-full bg-amber-500 text-slate-900 font-bold py-4 rounded-xl hover:bg-amber-400 transition-colors duration-300 shadow-lg disabled:opacity-50"
             >
-              {isLoading ? 'Chargement...' : 'Commencer avec Premium'}
+              {isLoading ? 'Chargement...' : user ? 'Commencer avec Premium' : 'S\'inscrire et choisir Premium'}
             </button>
           </div>
         </div>

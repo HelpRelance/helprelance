@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { createClient } from '@supabase/supabase-js';
 import Link from 'next/link';
+import PricingModal from '../components/PricingModal';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -13,6 +14,7 @@ export default function Dashboard() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [history, setHistory] = useState([]);
+  const [showPricingModal, setShowPricingModal] = useState(false);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -88,7 +90,10 @@ export default function Dashboard() {
               <h3 className="text-lg font-bold text-slate-900">Abonnement</h3>
             </div>
             <p className="text-2xl font-bold text-slate-900">Essai gratuit</p>
-            <button className="text-sm text-amber-500 hover:text-amber-600 font-semibold mt-2">
+            <button 
+              onClick={() => setShowPricingModal(true)}
+              className="text-sm text-amber-500 hover:text-amber-600 font-semibold mt-2"
+            >
               Passer à Premium →
             </button>
           </div>
@@ -118,12 +123,12 @@ export default function Dashboard() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
               </svg>
               <p className="text-slate-600 mb-4">Aucun email généré pour le moment</p>
-              <Link
-                href="/"
+              <button
+                onClick={() => setShowPricingModal(true)}
                 className="inline-block px-6 py-3 bg-gradient-to-r from-slate-900 to-slate-800 text-white font-bold rounded-lg hover:from-slate-800 hover:to-slate-700 transition"
               >
-                Générer mon premier email
-              </Link>
+                Choisir une formule pour commencer
+              </button>
             </div>
           ) : (
             <div className="space-y-4">
@@ -162,6 +167,11 @@ export default function Dashboard() {
           )}
         </div>
       </div>
+
+      <PricingModal
+        isOpen={showPricingModal}
+        onClose={() => setShowPricingModal(false)}
+      />
     </div>
   );
 }
