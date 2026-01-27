@@ -34,7 +34,7 @@ export default function PricingModal({ isOpen, onClose }) {
 
     try {
       const priceId = plan === 'pro' 
-        ? 'price_1StlZHAfNQgXJOqE4iwRWX4F'
+        ? 'price_1Su5KOAfNQgXJOqEGdA9kV9r'
         : 'price_1Stla1AfNQgXJOqEZwTj6Xnv';
 
       const response = await fetch('/api/stripe/create-checkout', {
@@ -111,7 +111,7 @@ export default function PricingModal({ isOpen, onClose }) {
             <div className="mb-4">
               <h3 className="text-2xl font-bold text-slate-900 mb-2">Pro</h3>
               <div className="flex items-baseline gap-2 mb-1">
-                <span className="text-4xl font-bold text-slate-900">7€</span>
+                <span className="text-4xl font-bold text-slate-900">9,99€</span>
                 <span className="text-slate-500">/mois</span>
               </div>
               <p className="text-sm text-slate-500">Idéal pour démarrer</p>
