@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import { createClient } from '@supabase/supabase-js';
 import Link from 'next/link';
 import PricingModal from '../components/PricingModal';
+import HistoryExtensionModal from '../components/HistoryExtensionModal';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -15,6 +16,7 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [history, setHistory] = useState([]);
   const [showPricingModal, setShowPricingModal] = useState(false);
+  const [showExtensionModal, setShowExtensionModal] = useState(false);
   const [subscription, setSubscription] = useState(null);
 
   useEffect(() => {
@@ -111,6 +113,14 @@ export default function Dashboard() {
               <>
                 <p className="text-2xl font-bold text-slate-900">{subscription}</p>
                 <p className="text-sm text-slate-500 mt-1">Formule active</p>
+                {subscription === 'Pro' && (
+                  <button 
+                    onClick={() => setShowExtensionModal(true)}
+                    className="mt-3 w-full px-4 py-2 bg-amber-50 border border-amber-200 text-amber-700 text-xs font-semibold rounded-lg hover:bg-amber-100 transition"
+                  >
+                    + Extension Historique (5€/mois)
+                  </button>
+                )}
               </>
             ) : (
               <>
@@ -200,6 +210,13 @@ export default function Dashboard() {
       <PricingModal
         isOpen={showPricingModal}
         onClose={() => setShowPricingModal(false)}
+      />
+
+      <HistoryExtensionModal
+        isOpen={showExtensionModal}
+        onClose={() => setShowExtensionModal(false)}
+        userEmail={user?.email}
+        userId={user?.id}
       />
     </div>
   );
