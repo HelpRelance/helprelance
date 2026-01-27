@@ -157,7 +157,7 @@ export default function PricingModal({ isOpen, onClose }) {
             <div className="mb-4">
               <h3 className="text-2xl font-bold text-white mb-2">Premium</h3>
               <div className="flex items-baseline gap-2 mb-1">
-                <span className="text-4xl font-bold text-white">19€</span>
+                <span className="text-4xl font-bold text-white">19,99€</span>
                 <span className="text-slate-300">/mois</span>
               </div>
               <p className="text-sm text-slate-300">Pour les pros exigeants</p>
